@@ -1,4 +1,4 @@
-from alpine:latest
+from mirror.gcr.io/library/alpine:latest
 RUN apk add --no-cache py3-pip \
     && pip3 install --upgrade pip
 
