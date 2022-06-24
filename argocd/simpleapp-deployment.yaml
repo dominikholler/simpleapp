@@ -14,7 +14,7 @@ spec:
         app: simpleapp
     spec:
       containers:
-        - image: quay.io/dholler/simpleapp
+      - image: quay.io/dholler/simpleapp
         name: simpleapp
         ports:
         - containerPort: 5000
