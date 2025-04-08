@@ -1,0 +1,56 @@
+apiVersion: cdi.kubevirt.io/v1beta1
+kind: DataVolume
+metadata:
+  name: rhel9
+  annotations:
+    cdi.kubevirt.io/storage.bind.immediate.requested: 'true'
+spec:
+  sourceRef:
+    kind: DataSource
+    name: rhel9
+    namespace: openshift-virtualization-os-images
+  storage: {}
+---
+apiVersion: cdi.kubevirt.io/v1beta1
+kind: VolumeCloneSource
+metadata:
+  name: rhel-9-minimalpvc
+spec:
+  source:
+    kind: PersistentVolumeClaim
+    name: rhel9
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rhel-9-minimalpvc
+spec:
+  dataSourceRef:
+    apiGroup: cdi.kubevirt.io
+    kind: VolumeCloneSource
+    name: rhel-9-minimalpvc
+  accessModes:
+  - ReadWriteOnce
+  volumeMode: Block
+  resources:
+    requests:
+      storage: 30Gi
+---
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+ name: rhel-9-minimalpvc
+spec:
+  instancetype:
+    name: u1.medium
+  preference:
+    name: rhel.9
+  runStrategy: Always
+  template:
+    spec:
+      domain:
+        devices: {}
+      volumes:
+        - persistentVolumeClaim:
+            claimName: rhel-9-minimalpvc
+          name: rootdisk
